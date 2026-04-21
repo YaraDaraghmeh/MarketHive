@@ -1,6 +1,4 @@
 package com.markethive.MarketHive.entity;
-
-
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -35,4 +33,3 @@ public class OrderItem {
         if (this.id == null) this.id = UUID.randomUUID().toString();
     }
 }
-
