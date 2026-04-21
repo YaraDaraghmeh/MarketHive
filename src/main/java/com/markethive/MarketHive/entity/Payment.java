@@ -24,6 +24,22 @@ public class Payment {
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PaymentStatus status = PaymentStatus.pending;
 
+    @Column(nullable = false, length = 50)
+    private String method;
+
+    @Column(name = "transaction_id", length = 200)
+    private String transactionId;
+
+    @Column(name = "paid_at")
+    private LocalDateTime paidAt;
+
+    @PrePersist
+    protected void onCreate() {
+        if (this.id == null) this.id = UUID.randomUUID().toString();
+    }
 
 }
