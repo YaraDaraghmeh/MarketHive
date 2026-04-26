@@ -44,5 +44,12 @@ public class CartController {
                 cartService.updateQuantity(productId, quantity, currentUser.getId())));
     }
 
+    @DeleteMapping("/{productId}")
+    public ResponseEntity<ApiResponse<Void>> removeItem(
+            @PathVariable String productId,
+            @AuthenticationPrincipal User currentUser) {
+        cartService.removeItem(productId, currentUser.getId());
+        return ResponseEntity.ok(ApiResponse.success("Item removed from cart", null));
+    }
 
 }
