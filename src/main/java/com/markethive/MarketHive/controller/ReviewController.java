@@ -34,6 +34,18 @@ public class ReviewController {
         return ResponseEntity.ok(ApiResponse.success(reviewService.getByUser(currentUser.getId())));
     }
 
+    @PostMapping("/reviews/product/{productId}")
+    public ResponseEntity<ApiResponse<ReviewResponse>> addReview(
+            @PathVariable String productId,
+            @Valid @RequestBody ReviewRequest request,
+            @AuthenticationPrincipal User currentUser) {
+        ReviewResponse response = reviewService.addReview(productId, request, currentUser.getId());
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.success("Review added successfully", response));
+    }
+
+
+
 
 
 
