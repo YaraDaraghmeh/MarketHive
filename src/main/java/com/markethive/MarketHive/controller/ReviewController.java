@@ -53,6 +53,14 @@ public class ReviewController {
                 reviewService.updateReview(reviewId, request, currentUser.getId())));
     }
 
+    @DeleteMapping("/reviews/{reviewId}")
+    public ResponseEntity<ApiResponse<Void>> deleteReview(
+            @PathVariable String reviewId,
+            @AuthenticationPrincipal User currentUser) {
+        reviewService.deleteReview(reviewId, currentUser.getId());
+        return ResponseEntity.ok(ApiResponse.success("Review deleted", null));
+    }
+
 
 
 
