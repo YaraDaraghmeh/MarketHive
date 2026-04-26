@@ -1,0 +1,81 @@
+package com.markethive.MarketHive.controller;
+
+
+import com.markethive.MarketHive.dto.request.OrderRequest;
+import com.markethive.MarketHive.dto.response.ApiResponse;
+import com.markethive.MarketHive.dto.response.OrderResponse;
+import com.markethive.MarketHive.entity.User;
+import com.markethive.MarketHive.enums.OrderStatus;
+import com.markethive.MarketHive.services.OrderService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api")
+@RequiredArgsConstructor
+public class OrderController {
+
+    private final OrderService orderService;
+
+    @PostMapping("/orders")
+    public ResponseEntity<ApiResponse<OrderResponse>> placeOrder(
+            @Valid @RequestBody OrderRequest request,
+            @AuthenticationPrincipal User currentUser) {
+        OrderResponse response = orderService.placeOrder(request, currentUser.getId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("Order placed successfully", response));
+    }
+
+
+    @GetMapping("/orders")
+    public ResponseEntity<ApiResponse<List<OrderResponse>>> getMyOrders(
+            @AuthenticationPrincipal User currentUser) {
+        return ResponseEntity.ok(ApiResponse.success(orderService.getMyOrders(currentUser.getId())));
+    }
+
+
+    @GetMapping("/orders/{id}")
+    public ResponseEntity<ApiResponse<OrderResponse>> getOrder(
+            @PathVariable String id,
+            @AuthenticationPrincipal User currentUser) {
+        return ResponseEntity.ok(ApiResponse.success(orderService.getById(id, currentUser.getId())));
+    }
+
+    @PatchMapping("/orders/{id}/cancel")
+    public ResponseEntity<ApiResponse<Void>> cancelOrder(
+            @PathVariable String id,
+            @AuthenticationPrincipal User currentUser) {
+        orderService.cancelOrder(id, currentUser.getId());
+        return ResponseEntity.ok(ApiResponse.success("Order cancelled", null));
+    }
+
+    @GetMapping("/admin/orders")
+    @PreAuthorize("hasRole('admin')")
+    public ResponseEntity<ApiResponse<List<OrderResponse>>> getAllOrders() {
+        return ResponseEntity.ok(ApiResponse.success(orderService.getAllOrders()));
+    }
+
+    @PatchMapping("/admin/orders/{id}/status")
+    @PreAuthorize("hasRole('admin')")
+    public ResponseEntity<ApiResponse<OrderResponse>> updateStatus(
+            @PathVariable String id,
+            @RequestParam OrderStatus status) {
+        return ResponseEntity.ok(ApiResponse.success("Order status updated", orderService.updateStatus(id, status)));
+    }
+
+
+
+
+
+
+
+
+
+}
+
