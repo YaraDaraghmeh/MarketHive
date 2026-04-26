@@ -46,7 +46,7 @@ public class OrderController {
             @AuthenticationPrincipal User currentUser) {
         return ResponseEntity.ok(ApiResponse.success(orderService.getById(id, currentUser.getId())));
     }
-    /** User: cancel own order */
+
     @PatchMapping("/orders/{id}/cancel")
     public ResponseEntity<ApiResponse<Void>> cancelOrder(
             @PathVariable String id,
@@ -54,6 +54,7 @@ public class OrderController {
         orderService.cancelOrder(id, currentUser.getId());
         return ResponseEntity.ok(ApiResponse.success("Order cancelled", null));
     }
+
 
 
 
