@@ -44,6 +44,17 @@ public class ReviewController {
                 .body(ApiResponse.success("Review added successfully", response));
     }
 
+    @PutMapping("/reviews/{reviewId}")
+    public ResponseEntity<ApiResponse<ReviewResponse>> updateReview(
+            @PathVariable String reviewId,
+            @Valid @RequestBody ReviewRequest request,
+            @AuthenticationPrincipal User currentUser) {
+        return ResponseEntity.ok(ApiResponse.success("Review updated",
+                reviewService.updateReview(reviewId, request, currentUser.getId())));
+    }
+
+
+
 
 
 
