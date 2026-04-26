@@ -29,6 +29,18 @@ public class PaymentController {
         return ResponseEntity.ok(ApiResponse.success("Payment processed",
                 paymentService.processPayment(request, currentUser.getId())));
     }
+    /** User: get payment for own order */
+    @GetMapping("/payments/order/{orderId}")
+    public ResponseEntity<ApiResponse<PaymentResponse>> getByOrder(@PathVariable String orderId) {
+        return ResponseEntity.ok(ApiResponse.success(paymentService.getByOrderId(orderId)));
+    }
+
+    /** Admin: list all payments */
+    @GetMapping("/admin/payments")
+    @PreAuthorize("hasRole('admin')")
+    public ResponseEntity<ApiResponse<List<PaymentResponse>>> getAll() {
+        return ResponseEntity.ok(ApiResponse.success(paymentService.getAll()));
+    }
 
 
 }
