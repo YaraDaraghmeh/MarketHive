@@ -33,5 +33,12 @@ public class OrderController {
     }
 
 
+    @GetMapping("/orders")
+    public ResponseEntity<ApiResponse<List<OrderResponse>>> getMyOrders(
+            @AuthenticationPrincipal User currentUser) {
+        return ResponseEntity.ok(ApiResponse.success(orderService.getMyOrders(currentUser.getId())));
+    }
+
+
 }
 
