@@ -54,13 +54,20 @@ public class OrderController {
         orderService.cancelOrder(id, currentUser.getId());
         return ResponseEntity.ok(ApiResponse.success("Order cancelled", null));
     }
-    /** Admin: view all orders */
+
     @GetMapping("/admin/orders")
     @PreAuthorize("hasRole('admin')")
     public ResponseEntity<ApiResponse<List<OrderResponse>>> getAllOrders() {
         return ResponseEntity.ok(ApiResponse.success(orderService.getAllOrders()));
     }
-
+    
+    @PatchMapping("/admin/orders/{id}/status")
+    @PreAuthorize("hasRole('admin')")
+    public ResponseEntity<ApiResponse<OrderResponse>> updateStatus(
+            @PathVariable String id,
+            @RequestParam OrderStatus status) {
+        return ResponseEntity.ok(ApiResponse.success("Order status updated", orderService.updateStatus(id, status)));
+    }
 
 
 
