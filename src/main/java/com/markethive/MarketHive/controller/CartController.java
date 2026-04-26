@@ -27,4 +27,12 @@ public class CartController {
         return ResponseEntity.ok(ApiResponse.success(cartService.getCart(currentUser.getId())));
     }
 
+    @PostMapping
+    public ResponseEntity<ApiResponse<CartResponse>> addToCart(
+            @Valid @RequestBody CartRequest request,
+            @AuthenticationPrincipal User currentUser) {
+        return ResponseEntity.ok(ApiResponse.success("Item added to cart",
+                cartService.addToCart(request, currentUser.getId())));
+    }
+
 }
