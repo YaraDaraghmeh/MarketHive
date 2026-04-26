@@ -54,6 +54,14 @@ public class OrderController {
         orderService.cancelOrder(id, currentUser.getId());
         return ResponseEntity.ok(ApiResponse.success("Order cancelled", null));
     }
+    /** Admin: view all orders */
+    @GetMapping("/admin/orders")
+    @PreAuthorize("hasRole('admin')")
+    public ResponseEntity<ApiResponse<List<OrderResponse>>> getAllOrders() {
+        return ResponseEntity.ok(ApiResponse.success(orderService.getAllOrders()));
+    }
+
+
 
 
 
