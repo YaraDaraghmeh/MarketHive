@@ -28,6 +28,13 @@ public class ReviewController {
             @PathVariable String productId) {
         return ResponseEntity.ok(ApiResponse.success(reviewService.getByProduct(productId)));
     }
+    @GetMapping("/reviews/me")
+    public ResponseEntity<ApiResponse<List<ReviewResponse>>> getMyReviews(
+            @AuthenticationPrincipal User currentUser) {
+        return ResponseEntity.ok(ApiResponse.success(reviewService.getByUser(currentUser.getId())));
+    }
+
+
 
 
 }
