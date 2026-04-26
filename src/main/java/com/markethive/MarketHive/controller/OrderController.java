@@ -60,7 +60,7 @@ public class OrderController {
     public ResponseEntity<ApiResponse<List<OrderResponse>>> getAllOrders() {
         return ResponseEntity.ok(ApiResponse.success(orderService.getAllOrders()));
     }
-    
+
     @PatchMapping("/admin/orders/{id}/status")
     @PreAuthorize("hasRole('admin')")
     public ResponseEntity<ApiResponse<OrderResponse>> updateStatus(
