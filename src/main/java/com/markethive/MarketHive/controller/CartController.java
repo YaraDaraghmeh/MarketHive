@@ -52,4 +52,12 @@ public class CartController {
         return ResponseEntity.ok(ApiResponse.success("Item removed from cart", null));
     }
 
+    @DeleteMapping
+    public ResponseEntity<ApiResponse<Void>> clearCart(
+            @AuthenticationPrincipal User currentUser) {
+        cartService.clearCart(currentUser.getId());
+        return ResponseEntity.ok(ApiResponse.success("Cart cleared", null));
+    }
+
+
 }
