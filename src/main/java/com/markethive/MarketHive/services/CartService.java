@@ -10,5 +10,5 @@ public interface CartService {
     CartResponse addToCart(CartRequest request, String userId);
     CartResponse updateQuantity(String productId, int quantity, String userId);
     void removeItem(String productId, String userId);
-
+    void clearCart(String userId);
 }
