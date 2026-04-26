@@ -35,4 +35,14 @@ public class CartController {
                 cartService.addToCart(request, currentUser.getId())));
     }
 
+    @PatchMapping("/{productId}")
+    public ResponseEntity<ApiResponse<CartResponse>> updateQuantity(
+            @PathVariable String productId,
+            @RequestParam int quantity,
+            @AuthenticationPrincipal User currentUser) {
+        return ResponseEntity.ok(ApiResponse.success("Quantity updated",
+                cartService.updateQuantity(productId, quantity, currentUser.getId())));
+    }
+
+
 }
