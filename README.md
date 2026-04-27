@@ -380,7 +380,7 @@ Vendor logs in     →  Receives JWT token → can now create markets and sell p
 
 ### Base URL
 ```
-http://localhost:8080
+https://markethive-production.up.railway.app
 ```
 
 ### Standard Response Format
