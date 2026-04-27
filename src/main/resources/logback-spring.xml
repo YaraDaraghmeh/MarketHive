@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- ── Console pattern ───────────────────────────────────────────── -->
+    <property name="CONSOLE_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss} [%thread] %highlight(%-5level) %cyan(%logger{36}) - %msg%n"/>
+
+    <!-- ── File pattern ──────────────────────────────────────────────── -->
+    <property name="FILE_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"/>
+
+    <!-- ── Log folder ────────────────────────────────────────────────── -->
+    <property name="LOG_PATH" value="logs"/>
+
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <!--  CONSOLE                                                         -->
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <!--  ALL LOGS  →  logs/app.log  (rolls daily, keeps 30 days)        -->
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <appender name="FILE_ALL" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/app.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/archived/app-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>500MB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${FILE_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <!--  ERROR LOGS ONLY  →  logs/error.log                             -->
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <appender name="FILE_ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/error.log</file>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/archived/error-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>60</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${FILE_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <!--  HTTP REQUESTS  →  logs/requests.log                            -->
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <appender name="FILE_REQUESTS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/requests.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/archived/requests-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>14</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${FILE_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <!--  SECURITY EVENTS  →  logs/security.log                          -->
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <appender name="FILE_SECURITY" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/security.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/archived/security-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>90</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${FILE_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <!--  LOGGER ROUTING                                                  -->
+    <!-- ════════════════════════════════════════════════════════════════ -->
+
+    <!-- HTTP request logs go to their own file -->
+    <logger name="com.ecommerce.filter.RequestLoggingFilter"
+            level="INFO" additivity="false">
+        <appender-ref ref="FILE_REQUESTS"/>
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <!-- Security / auth logs go to security file -->
+    <logger name="com.ecommerce.service.impl.AuthServiceImpl"
+            level="INFO" additivity="false">
+        <appender-ref ref="FILE_SECURITY"/>
+        <appender-ref ref="FILE_ALL"/>
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <!-- Everything from our app -->
+    <logger name="com.ecommerce" level="DEBUG" additivity="false">
+        <appender-ref ref="FILE_ALL"/>
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <!-- Error goes to error file too -->
+    <logger name="com.ecommerce" level="ERROR" additivity="true">
+        <appender-ref ref="FILE_ERROR"/>
+    </logger>
+
+    <!-- Spring framework — only WARN and above to reduce noise -->
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="org.hibernate" level="WARN"/>
+
+    <!-- Root -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE_ALL"/>
+        <appender-ref ref="FILE_ERROR"/>
+    </root>
+
+</configuration>
