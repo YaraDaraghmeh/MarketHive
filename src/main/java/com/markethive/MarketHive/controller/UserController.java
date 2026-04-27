@@ -33,7 +33,7 @@ public class UserController {
 
     @GetMapping("/admin/users/{id}")
     @PreAuthorize("hasRole('admin')")
-    public ResponseEntity<ApiResponse<UserResponse>> getUserById(@PathVariable String id) {
+    public ResponseEntity<ApiResponse<UserResponse>> getUserById(@PathVariable("id") String id) {
         return ResponseEntity.ok(ApiResponse.success(userService.getProfile(id)));
     }
 
