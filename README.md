@@ -100,6 +100,8 @@ Client Request
       ▼
  ApiResponse<T> ──── returned as JSON ────► Client
 ```
+<img width="950" height="834" alt="MarketHiveERD" src="https://github.com/user-attachments/assets/754f074b-5f5f-48bb-878a-ea2a89639374" />
+
 
 ---
 
