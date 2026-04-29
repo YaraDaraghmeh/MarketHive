@@ -5,6 +5,7 @@ import com.markethive.MarketHive.dto.request.RegisterRequest;
 import com.markethive.MarketHive.dto.response.AuthResponse;
 
 public interface AuthService {
-    AuthResponse register(RegisterRequest request);
+    AuthResponse registerUser(RegisterRequest request);
+    AuthResponse registerMarket(RegisterRequest request);
     AuthResponse login(LoginRequest request);
 }

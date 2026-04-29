@@ -26,42 +26,77 @@ public class AuthServiceImpl implements AuthService {
     private final JwtUtils jwtUtils;
 
     @Override
-    public AuthResponse register(RegisterRequest request) {
+    public AuthResponse registerUser(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new BadRequestException("Email is already registered");
-        }
-
-        Role role;
-        try {
-            role = Role.valueOf(request.getRole());
-        } catch (IllegalArgumentException e) {
-            role = Role.user;
-        }
-        if (role == Role.admin) {
-            throw new BadRequestException("Cannot self-register as admin");
+            throw new BadRequestException("Email already registered");
         }
 
         User user = User.builder()
                 .name(request.getName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(role)
+                .role(Role.user)
                 .phone(request.getPhone())
                 .isActive(true)
                 .build();
 
         user = userRepository.save(user);
         String token = jwtUtils.generateToken(user);
-        return new AuthResponse(token, user.getId(), user.getName(), user.getEmail(), user.getRole().name());
+
+        return AuthResponse.builder()
+                .token(token)
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .role(user.getRole().name())
+                .build();
+    }
+
+    @Override
+    public AuthResponse registerMarket(RegisterRequest request) {
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new BadRequestException("Email already registered");
+        }
+
+        User user = User.builder()
+                .name(request.getName())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .role(Role.market)
+                .phone(request.getPhone())
+                .isActive(false) // blocked until admin approves
+                .build();
+
+        userRepository.save(user);
+
+        // No token — they cannot login yet
+        return AuthResponse.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .role(user.getRole().name())
+                .token(null)
+                .build();
     }
 
     @Override
     public AuthResponse login(LoginRequest request) {
         Authentication auth = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()
+                )
         );
+
         User user = (User) auth.getPrincipal();
         String token = jwtUtils.generateToken(user);
-        return new AuthResponse(token, user.getId(), user.getName(), user.getEmail(), user.getRole().name());
+
+        return AuthResponse.builder()
+                .token(token)
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .role(user.getRole().name())
+                .build();
     }
 }

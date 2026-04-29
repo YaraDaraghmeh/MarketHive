@@ -17,8 +17,4 @@ public class RegisterRequest {
     private String password;
 
     private String phone;
-
-    // role defaults to "user"; market self-register gets "market"
-    private String role = "user";
 }
-
