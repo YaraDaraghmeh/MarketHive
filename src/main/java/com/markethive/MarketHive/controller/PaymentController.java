@@ -16,13 +16,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/payments")
 @RequiredArgsConstructor
 public class PaymentController {
 
     private final PaymentService paymentService;
 
-    @PostMapping("/payments")
+    @PostMapping
     public ResponseEntity<ApiResponse<PaymentResponse>> processPayment(
             @Valid @RequestBody PaymentRequest request,
             @AuthenticationPrincipal User currentUser) {
@@ -30,13 +30,13 @@ public class PaymentController {
                 paymentService.processPayment(request, currentUser.getId())));
     }
 
-    @GetMapping("/payments/order/{orderId}")
+    @GetMapping("/order/{orderId}")
     public ResponseEntity<ApiResponse<PaymentResponse>> getByOrder(@PathVariable String orderId) {
         return ResponseEntity.ok(ApiResponse.success(paymentService.getByOrderId(orderId)));
     }
 
 
-    @GetMapping("/admin/payments")
+    @GetMapping
     @PreAuthorize("hasRole('admin')")
     public ResponseEntity<ApiResponse<List<PaymentResponse>>> getAll() {
         return ResponseEntity.ok(ApiResponse.success(paymentService.getAll()));

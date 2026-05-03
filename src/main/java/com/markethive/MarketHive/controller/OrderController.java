@@ -6,6 +6,7 @@ import com.markethive.MarketHive.dto.response.ApiResponse;
 import com.markethive.MarketHive.dto.response.OrderResponse;
 import com.markethive.MarketHive.entity.User;
 import com.markethive.MarketHive.enums.OrderStatus;
+import com.markethive.MarketHive.enums.Role;
 import com.markethive.MarketHive.services.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,13 +19,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/orders")
 @RequiredArgsConstructor
 public class OrderController {
 
     private final OrderService orderService;
 
-    @PostMapping("/orders")
+    @PostMapping
     public ResponseEntity<ApiResponse<OrderResponse>> placeOrder(
             @Valid @RequestBody OrderRequest request,
             @AuthenticationPrincipal User currentUser) {
@@ -33,21 +34,24 @@ public class OrderController {
     }
 
 
-    @GetMapping("/orders")
-    public ResponseEntity<ApiResponse<List<OrderResponse>>> getMyOrders(
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<OrderResponse>>> getOrders(
             @AuthenticationPrincipal User currentUser) {
+        if (currentUser != null && currentUser.getRole() == Role.admin) {
+            return ResponseEntity.ok(ApiResponse.success(orderService.getAllOrders()));
+        }
         return ResponseEntity.ok(ApiResponse.success(orderService.getMyOrders(currentUser.getId())));
     }
 
 
-    @GetMapping("/orders/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<OrderResponse>> getOrder(
             @PathVariable String id,
             @AuthenticationPrincipal User currentUser) {
         return ResponseEntity.ok(ApiResponse.success(orderService.getById(id, currentUser.getId())));
     }
 
-    @PatchMapping("/orders/{id}/cancel")
+    @PatchMapping("/{id}/cancel")
     public ResponseEntity<ApiResponse<Void>> cancelOrder(
             @PathVariable String id,
             @AuthenticationPrincipal User currentUser) {
@@ -55,13 +59,7 @@ public class OrderController {
         return ResponseEntity.ok(ApiResponse.success("Order cancelled", null));
     }
 
-    @GetMapping("/admin/orders")
-    @PreAuthorize("hasRole('admin')")
-    public ResponseEntity<ApiResponse<List<OrderResponse>>> getAllOrders() {
-        return ResponseEntity.ok(ApiResponse.success(orderService.getAllOrders()));
-    }
-
-    @PatchMapping("/admin/orders/{id}/status")
+    @PatchMapping("/{id}/status")
     @PreAuthorize("hasRole('admin')")
     public ResponseEntity<ApiResponse<OrderResponse>> updateStatus(
             @PathVariable String id,

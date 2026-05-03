@@ -54,7 +54,7 @@ public class ProductController {
     }
 
     /** Market: add product to own market */
-    @PostMapping("/market/markets/{marketId}/products")
+    @PostMapping("/markets/{marketId}/products")
     @PreAuthorize("hasRole('market')")
     public ResponseEntity<ApiResponse<ProductResponse>> create(
             @PathVariable String marketId,
@@ -65,7 +65,7 @@ public class ProductController {
     }
 
     /** Market: update own product */
-    @PutMapping("/market/products/{id}")
+    @PutMapping("/products/{id}")
     @PreAuthorize("hasRole('market')")
     public ResponseEntity<ApiResponse<ProductResponse>> update(
             @PathVariable String id,
@@ -75,7 +75,7 @@ public class ProductController {
     }
 
     /** Market: delete own product */
-    @DeleteMapping("/market/products/{id}")
+    @DeleteMapping("/products/{id}")
     @PreAuthorize("hasRole('market')")
     public ResponseEntity<ApiResponse<Void>> delete(
             @PathVariable String id,
@@ -85,7 +85,7 @@ public class ProductController {
     }
 
     /** Market: toggle product visibility */
-    @PatchMapping("/market/products/{id}/toggle-active")
+    @PatchMapping("/products/{id}/toggle-active")
     @PreAuthorize("hasRole('market')")
     public ResponseEntity<ApiResponse<Void>> toggleActive(
             @PathVariable String id,
